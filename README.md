@@ -6,9 +6,11 @@ You can set up Cloud Functions to execute in response to various scenarios by sp
 
 Broadly, triggers fall into two categories:
 
-HTTP triggers, which react to HTTP(S) requests, and correspond to HTTP functions.
+## HTTP triggers 
+Which react to HTTP(S) requests, and correspond to HTTP functions.
 
-Event triggers, which react to events within your Google Cloud project, and correspond to event-driven functions.
+## Event triggers 
+Which react to events within your Google Cloud project, and correspond to event-driven functions.
 
 You specify triggers as part of function deployment. You cannot bind the same function to more than one trigger at a time, but you can have the same event cause multiple functions to execute by deploying multiple functions with the same trigger settings.
 
