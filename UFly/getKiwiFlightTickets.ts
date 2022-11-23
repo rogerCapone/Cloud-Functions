@@ -127,3 +127,68 @@ exports.getKiwiFlightTickets = functions.https.onRequest(async (req, resp) => {
 }catch(e){
   console.log(e.toString());
 }})
+
+function getLowestPrice(ticketInfo:KiwiTicket[]){
+
+      let array:number[] = [];
+      let position:number = 0;
+      let response:number[]= [];
+      console.log(ticketInfo);
+      for (let index = 0; index < ticketInfo.length; index++) {
+          array.push(ticketInfo[index].price);
+        }
+
+      let min = array[0];
+
+      for(let i = 0; i < array.length; i++){
+        if(array[i] < min){
+          min = array[i];
+          position = i;
+          console.log(position);
+        }
+      }
+      // console.log(min);
+      response.push(min,position);
+      console.log(response);
+      return response;
+    }
+
+    async function publishMessage(orig:string, dest:string, price:number, day:number, month:number, year:number, url:string){  //day:number, month:number, year:number
+      //date te format == ( DD/MM/YYYY )
+      console.log(url)
+      console.log('url');
+
+      await db.collection('topics').get().then((docs)=>{
+        if(!docs.empty){
+          docs.forEach((doc)=>{
+            let topic = doc.id;
+            console.log(topic);
+            //Si hi ha un missatge que ja existeix, aleshores no facis res, d'alguna manera hauriem de actualitzar la llista de missatges...
+            let arrTopic = topic.split('-');
+             let or = arrTopic[0];
+             let des = arrTopic[1];
+             let preu = parseFloat(arrTopic[2]);
+             const start = new Date(parseInt(arrTopic[5]), parseInt(arrTopic[4]), parseInt(arrTopic[3]));
+             const startEpoch = start.getTime()/1000.0;
+             const end = new Date(parseInt(arrTopic[8]), parseInt(arrTopic[7]), parseInt(arrTopic[6]));
+             const endEpoch = end.getTime()/1000.0;
+             const anal = new Date(year, month, day);
+             const analEpoch = anal.getTime()/1000.0;
+             // console.log(or, des, preu, url);
+             if(or === orig && des === dest && preu >= price && analEpoch >= startEpoch && analEpoch <= endEpoch){
+               console.log(topic,or, orig,des, dest, preu)
+               return db.doc(`topics/${topic}`).update({
+                 messages: admin.firestore.FieldValue.arrayUnion(`📍🔔 No pierdas tu oportunidad: ${orig}-${dest} para ti por ${price}€ 🖤 || ${url}`),
+                 msg_count: admin.firestore.FieldValue.increment(+1)
+               }).then(()=>{
+                 console.log('messageDelivered!');
+                 return;
+               })
+             }
+             return;
+          })
+        }else{
+          return;
+        }
+      })
+      }
