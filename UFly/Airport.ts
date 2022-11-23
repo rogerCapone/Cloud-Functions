@@ -3,20 +3,23 @@
 //   import { Convert } from "./file";
 //
 //   const airport = Convert.toAirport(json);
-
 export interface Airport {
-    cityId:      string;
-    name:        string;
-    country:     string;
-    description: null;
-    icon:        null;
-    location:    Location;
-    places:      any[];
-    airports:    string[];
-    images:      any[];
-}
-
-export interface Location {
-    longitude: number;
-    latitude:  number;
+    id?:            number;
+    iata?:          string;
+    icao?:          string;
+    name?:          string;
+    location?:      string;
+    street_number?: string;
+    street?:        string;
+    city?:          string;
+    county?:        string;
+    state?:         string;
+    country_iso?:   string;
+    country?:       string;
+    postal_code?:   string;
+    phone?:         string;
+    latitude?:      number;
+    longitude?:     number;
+    uct?:           number;
+    website?:       string;
 }
